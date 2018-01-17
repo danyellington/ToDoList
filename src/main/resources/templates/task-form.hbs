@@ -1,10 +1,10 @@
 {{#partial "content"}}
 
-    {{#if editTask}}
-        <h1>Edit this Post!</h1>
-        <form action="/tasks/{{editTask.id}}/update" method="post">
-            <label for="description">Edit this task's description</label>
-            <input id="description" name="description" type="text" value="{{editTask.description}}">
+{{#if editTask}}
+<h1>Edit this Post!</h1>
+<form action="/tasks/{{editTask.id}}/update" method="post">
+    <label for="description">Edit this task's description</label>
+    <input id="description" name="description" type="text" value="{{editTask.description}}">
 
     {{else}}
     <h1>Add a new Task!</h1>
@@ -13,9 +13,9 @@
         <label for="description">Task Description</label>
         <input id="description" name="description" type="text">
 
-    {{/if}}
+        {{/if}}
         <button type="submit" class="btn btn-default">Go!</button>
     </form>
-{{/partial}}
+    {{/partial}}
 
-{{> layout.hbs}}
+    {{> layout.hbs}}
