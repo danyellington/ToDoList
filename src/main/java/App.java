@@ -3,7 +3,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import dao.Sql2oCategoryDao;
 import dao.Sql2oTaskDao;
+import models.Category;
 import models.Task;
 import org.sql2o.Sql2o;
 import spark.ModelAndView;
@@ -17,10 +20,15 @@ public class App {
         String connectionString = "jdbc:h2:~/todolist.db;INIT=RUNSCRIPT from 'classpath:db/create.sql'";
         Sql2o sql2o = new Sql2o(connectionString, "", "");
         Sql2oTaskDao taskDao = new Sql2oTaskDao(sql2o);
+        Sql2oCategoryDao categoryDao = new Sql2oCategoryDao(sql2o);
+
+
 
         //get: show all tasks in all categories and show all categories
         get("/", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
+            List<Category> allCategories = categoryDao.getAll();
+            model.put("categories", allCategories);
             List<Task> tasks = taskDao.getAll();
             model.put("tasks", tasks);
             return new ModelAndView(model, "index.hbs");
@@ -77,12 +85,35 @@ public class App {
             return new ModelAndView(model, "success.hbs");
         }, new HandlebarsTemplateEngine());
 
+
         //get: delete an individual task
         get("categories/:category_id/tasks/:task_id/delete", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             int idOfTaskToDelete = Integer.parseInt(req.params("task_id"));
             Task deleteTask = taskDao.findById(idOfTaskToDelete);
             taskDao.deleteById(idOfTaskToDelete);
+            return new ModelAndView(model, "success.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        //show new category form
+        get("/categories/new", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            List<Category> categories = categoryDao.getAll(); //refresh list of links for navbar.
+            model.put("categories", categories);
+
+            return new ModelAndView(model, "category-form.hbs"); //new
+        }, new HandlebarsTemplateEngine());
+
+        post("/categories", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            String name = request.queryParams("name");
+            Category newCategory = new Category(name);
+            categoryDao.add(newCategory);
+
+            List<Category> categories = categoryDao.getAll();
+            model.put("categories", categories);
+
             return new ModelAndView(model, "success.hbs");
         }, new HandlebarsTemplateEngine());
     }
