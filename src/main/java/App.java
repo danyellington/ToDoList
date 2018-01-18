@@ -36,22 +36,6 @@ public class App {
             return new ModelAndView(model, "index.hbs");
         }, new HandlebarsTemplateEngine());
 
-        //get: show a specific task in a specific category
-        //  /categories/:category_id/tasks/:task_id
-        get("/categories/:catId", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
-            int idOfCategoryToFind = Integer.parseInt(req.params("catId")); //new
-
-            List<Category> categories = categoryDao.getAll(); //refresh list of links for navbar.
-            model.put("categories", categories);
-
-            Category foundCategory = categoryDao.findById(idOfCategoryToFind);
-            model.put("category", foundCategory);
-            List<Task> allTasksByCategory = categoryDao.getAllTasksByCategory(idOfCategoryToFind);
-            model.put("tasks", allTasksByCategory);
-
-            return new ModelAndView(model, "category-detail.hbs"); //new
-        }, new HandlebarsTemplateEngine());
 
         //get: show a form to create a new category
         //  /categories/new
@@ -79,8 +63,30 @@ public class App {
             return new ModelAndView(model, "success.hbs");
         }, new HandlebarsTemplateEngine());
 
+        //get: delete all categories and all tasks
+        get("/categories/delete", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            taskDao.clearAllTasks();
+            categoryDao.clearAllCategories();
+
+            List<Category> allCategories = categoryDao.getAll();
+            model.put("categories", allCategories);
+
+            return new ModelAndView(model, "success.hbs");
+        }, new HandlebarsTemplateEngine());
+
+
         //get: show a form to update a category
-        //  /categories/update
+        get("/categories/update", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            model.put("editCategory", true);
+
+            List<Category> allCategories = categoryDao.getAll();
+            model.put("categories", allCategories);
+
+            return new ModelAndView(model, "category-form.hbs");
+        }, new HandlebarsTemplateEngine());
 
         //post: process a form to update a category
         //  /categories/update
@@ -96,20 +102,26 @@ public class App {
             return new ModelAndView(model, "success.hbs");
         }, new HandlebarsTemplateEngine());
 
-        //get: delete a category and tasks it contains
-        //  /categories/:category_id/delete
-
-        //get: delete all categories and all tasks
-        get("/categories/delete", (req, res) -> {
+        //get: show a specific task in a specific category
+        //  /categories/:category_id/tasks/:task_id
+        get("/categories/:catId", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
-            taskDao.clearAllTasks();
-            categoryDao.clearAllCategories();
+            int idOfCategoryToFind = Integer.parseInt(req.params("catId")); //new
 
-            List<Category> allCategories = categoryDao.getAll();
-            model.put("categories", allCategories);
+            List<Category> categories = categoryDao.getAll(); //refresh list of links for navbar.
+            model.put("categories", categories);
 
-            return new ModelAndView(model, "success.hbs");
+            Category foundCategory = categoryDao.findById(idOfCategoryToFind);
+            model.put("category", foundCategory);
+            List<Task> allTasksByCategory = categoryDao.getAllTasksByCategory(idOfCategoryToFind);
+            model.put("tasks", allTasksByCategory);
+
+            return new ModelAndView(model, "category-detail.hbs"); //new
         }, new HandlebarsTemplateEngine());
+
+
+
+
 
 
 
@@ -132,11 +144,17 @@ public class App {
             return new ModelAndView(model, "success.hbs");
         }, new HandlebarsTemplateEngine());
 
+
         //get: show new task form
         get("/tasks/new", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
+
+            List<Category> allCategories = categoryDao.getAll();
+            model.put("categories", allCategories);
+
             return new ModelAndView(model, "task-form.hbs");
         }, new HandlebarsTemplateEngine());
+
 
         //post: process new task form
         post("/tasks/new", (request, response) -> {
@@ -145,13 +163,17 @@ public class App {
             List<Category> allCategories = categoryDao.getAll();
             model.put("categories", allCategories);
 
+            String taskName = request.queryParams("taskName");
             String description = request.queryParams("description");
             int categoryId = Integer.parseInt(request.queryParams("categoryId"));
-            Task newTask = new Task(description, categoryId ); //ignore the hardcoded categoryId
+            Task newTask = new Task(taskName, description, categoryId ); //ignore the hardcoded categoryId
             taskDao.add(newTask);
             model.put("task", newTask);
             return new ModelAndView(model, "success.hbs");
         }, new HandlebarsTemplateEngine());
+
+
+
         //get: show an individual task that is nested in a category
         get("/categories/:category_id/tasks/:task_id", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
@@ -182,11 +204,12 @@ public class App {
             List<Category> allCategories = categoryDao.getAll();
             model.put("categories", allCategories);
 
+            String newName = req.queryParams("taskName");
             String newContent = req.queryParams("description");
             int newCategoryId = Integer.parseInt(req.queryParams("categoryId"));
             int taskToEditId = Integer.parseInt(req.queryParams("taskToEditId"));
             Task editTask = taskDao.findById(taskToEditId);
-            taskDao.update(taskToEditId, newContent, newCategoryId);
+            taskDao.update(taskToEditId, newName, newContent, newCategoryId);
 
             return new ModelAndView(model, "success.hbs");
         }, new HandlebarsTemplateEngine());

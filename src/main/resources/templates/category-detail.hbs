@@ -4,10 +4,10 @@
 <ul>
     {{#each tasks}}
     <li>
-        <h5>Task Name:</h5>
-        <p>{{description }}</p>
+        <h5>Task Name: {{ taskName }}</h5>
+        <p>Task description:{{ description }}</p>
         <h5>Created At:</h5>
-        <p> {{createdAt}}</p>
+        <p> {{ createdAt }}</p>
         <h5>Task status:</h5>
         {{#if completed }}
         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>  Completed

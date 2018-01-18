@@ -1,11 +1,18 @@
 {{#partial "content"}}
 
+
+<p>Name: {{ task.taskName }}</p>
 <p>Description:</p>
 
 <p>{{ task.description }}</p>
 <h5>Created At:</h5>
 <p> {{ task.createdAt }}</p>
 <h5>Task status:</h5>
+<p> {{ task.completed }}</p>
+
+{{event.description}}
+
+
 <p>
     {{#if task.published }}
     <span class="glyphicon glyphicon-star" aria-hidden="true"></span>  Completed

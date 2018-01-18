@@ -1,12 +1,16 @@
 package models;
 
+import java.time.LocalDateTime;
+
 public class Category {
 
     private String name;
     private int id;
+    private LocalDateTime createdAt;
 
     public Category(String name) {
         this.name = name;
+        this.createdAt =LocalDateTime.now();
     }
 
     public String getName() {

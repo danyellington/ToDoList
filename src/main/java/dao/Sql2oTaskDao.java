@@ -8,9 +8,7 @@ import org.sql2o.Sql2oException;
 import java.sql.Timestamp;
 import java.util.List;
 
-/**
- * Created by epicodus_staff on 7/18/17.
- */
+
 public class Sql2oTaskDao implements TaskDao { //implementing our interface
 
     private final Sql2o sql2o;
@@ -22,11 +20,13 @@ public class Sql2oTaskDao implements TaskDao { //implementing our interface
     @Override
     public void add(Task task) {
 
-        String sql = "INSERT INTO tasks (description, categoryId) VALUES (:description, :categoryId)"; //raw sql
+        String sql = "INSERT INTO tasks (taskName, description, categoryId) VALUES (:taskName, :description, :categoryId)"; //raw sql
         try(Connection con = sql2o.open()){ //try to open a connection
             int id = (int) con.createQuery(sql) //make a new variable
+                    .addParameter("taskName", task.getTaskName())
                     .addParameter("description", task.getDescription())
                     .addParameter("categoryId", task.getCategoryId())
+                    .addColumnMapping("TASKNAME", "taskName")
                     .addColumnMapping("DESCRIPTION", "description")
                     .addColumnMapping("CATEGORYID", "categoryId")
                     .addColumnMapping("CREATEDAT", "createdAt")
@@ -57,10 +57,11 @@ public class Sql2oTaskDao implements TaskDao { //implementing our interface
     }
 
     @Override
-    public void update(int id, String newDescription, int newCategoryId){
-        String sql = "UPDATE tasks SET (description, categoryId) = (:description, :categoryId) WHERE id=:id"; //raw sql
+    public void update(int id, String newTaskName, String newDescription, int newCategoryId){
+        String sql = "UPDATE tasks SET (taskName, description, categoryId) = (:taskName, :description, :categoryId) WHERE id=:id"; //raw sql
         try(Connection con = sql2o.open()){
             con.createQuery(sql)
+                    .addParameter("taskName", newTaskName)
                     .addParameter("description", newDescription)
                     .addParameter("categoryId", newCategoryId)
                     .addParameter("id", id)

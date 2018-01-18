@@ -5,15 +5,21 @@ import java.util.ArrayList;
 
 public class Task {
 
+    private String taskName;
     private String description;
     private boolean completed;
     private int id;
     private int categoryId;
+    private LocalDateTime createdAt;
 
-    public Task(String description, int categoryId){
+    public Task(String taskName, String description, int categoryId){
+        this.taskName = taskName;
         this.description = description;
         this.completed = false;
         this.categoryId = categoryId;
+        this.createdAt = LocalDateTime.now();
+
+
     }
 
     public void setDescription(String description) {
@@ -51,6 +57,25 @@ public class Task {
     public int getId() {
         return this.id;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt){
+        this.createdAt = createdAt;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+
+
 
     @Override
     public boolean equals(Object o) {

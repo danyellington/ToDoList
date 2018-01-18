@@ -9,6 +9,9 @@
         {{/each}}
     </select>
     <br>
+    <label for="taskName">Edit this task's name</label>
+    <input id="taskName" name="taskName" type="text" placeholder="Enter a new description">
+    <br>
     <label for="description">Edit this task's description</label>
     <input id="description" name="description" type="text" placeholder="Enter a new description">
     <br>
@@ -25,8 +28,10 @@
 
     <form action="/tasks/new" method="post">
         {{#if categories}}
+        <label for="taskName">Task's name</label>
+        <input id="taskName" name="taskName" type="text" placeholder="Enter name">
         <label for="description">Task Description</label>
-        <input id="description" name="description" type="text">
+        <input id="description" name="description" type="text" placeholder="Enter description">
         <label for="categoryId">Categorize this task as:</label>
 
         <select id="categoryId" name="categoryId">
